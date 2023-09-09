@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo de Produtos</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="img">
+        <img class="main-figure" src="assets/logo-bunny.png" alt="" />
+      </div>
+    </header>
+    <main>
+      <section>
+        <form>
+          <fieldset id="main-form">
+            <div class="input-set">
+              <label for="input-name">Nome do produto:</label>
+              <input type="text" id="input-name" required />
+            </div>
+            <div class="input-set">
+              <label for="input-desc">Descrição:</label>
+              <input type="text" id="input-desc" maxlength="100" required />
+            </div>
+            <div class="input-set">
+              <label for="input-price">Preço:</label>
+              <input type="number" id="input-price" required />
+            </div>
+            <div class="input-set">
+              <label for="opcoes">Selecione a categoria:</label>
+              <select name="opcoes" id="opcoes">
+                <option value="" disabled selected>Selecione</option>
+                <option value="comestivel">Comestível</option>
+                <option value="brinquedo">Brinquedo</option>
+              </select>
+            </div>
+          </fieldset>
+          <button class="btn-add">Adicionar</button>
+        </form>
+      </section>
+      <section>
+        <ul class="lista-produtos">
+          <!--<li class="product-card" id ='1'>
+            <div class="product-name">
+              <h2>Nome do produto</h2>
+            </div>
+            <div class="product-desc">
+              <p>Descrição</p>
+            </div>
+            <div class="product-price">
+              <span>Preço: R$</span>
+            </div>
+            <div class="categoria">
+              <span>tipo</span>
+            </div>
+            <div class="botoes">
+              <button class="btn">
+                <img src="./assets/editar.png" alt="" />
+              </button>
+              <button class="btn">
+                <img src="./assets/excluir.png" alt="" />
+              </button>
+            </div>
+          </li> -->
+        </ul>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
