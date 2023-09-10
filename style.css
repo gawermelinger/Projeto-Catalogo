@@ -39,7 +39,7 @@ input {
   width: 100%;
   border-radius: 0.8rem;
 }
-.btn-add {
+.btn-submit {
   display: block;
   margin: 1rem auto;
   padding: 0.8rem;
@@ -123,6 +123,23 @@ input {
   padding: 0.3rem;
   margin: 0.5rem;
   border-radius: 0.8rem;
+}
+.display {
+  display: none;
+}
+.div-btn {
+  display: flex;
+  justify-content: center;
+}
+#btn-add {
+  font-size: 1.5rem;
+  width: 20rem;
+  height: 6rem;
+  border-radius: 5rem;
+  margin: 4rem auto;
+  background-color: #204433;
+  color: aliceblue;
+  cursor: pointer;
 }
 
 /*<a href="https://www.flaticon.com/br/icones-gratis/editar" title="editar ícones">Editar ícones criados por Kiranshastry - Flaticon</a>*/

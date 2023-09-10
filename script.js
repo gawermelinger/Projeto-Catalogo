@@ -82,15 +82,25 @@ class Catalogo {
   constructor() {}
 
   static init() {
+    const botoaoAdicionar = document.getElementById("btn-add");
+    botoaoAdicionar.addEventListener("click", () => {
+      const sectionAdicionar = document.getElementById("form-section");
+      sectionAdicionar.classList.remove("display");
+      botoaoAdicionar.classList.add("display");
+    });
     const escolha = document.getElementById("opcoes");
     escolha.addEventListener("change", () => {
       this.personalizarFormulario();
+    });
+    this.btnCadastro = document.querySelector("form");
+    this.btnCadastro.addEventListener("submit", (e) => {
+      Estoque.cadastrarProduto(e);
+      Catalogo.imprimirCatalogo();
     });
   }
 
   static personalizarFormulario() {
     const escolha = document.getElementById("opcoes").value;
-    console.log(escolha);
     const opcao = escolha === "comestivel" ? "Sabor:" : "Material:";
     const mainForm = document.getElementById("main-form");
     let divEscolha = document.getElementById("divEscolha");
@@ -116,6 +126,98 @@ class Catalogo {
     let maiuscula = input[0].toUpperCase();
     let minuscula = input.slice(1).toLowerCase();
     return maiuscula + minuscula;
+  }
+  static transformaCard(produto) {
+    const card = document.getElementById(`produto_ ${produto.id}`);
+    card.innerHTML = "";
+    card.classList.remove("card-grid");
+
+    const form = document.createElement("form");
+    form.classList.add("form-card");
+    card.appendChild(form);
+
+    const divForm1 = document.createElement("div");
+    divForm1.classList.add("form-name");
+    form.appendChild(divForm1);
+
+    const nomeEdit = document.createElement("input");
+    nomeEdit.type = "text";
+    nomeEdit.maxLenght = "40";
+    nomeEdit.value = produto.nome;
+    nomeEdit.classList.add("input-name");
+    divForm1.appendChild(nomeEdit);
+
+    const divForm2 = document.createElement("div");
+    divForm2.classList.add("form-desc");
+    form.appendChild(divForm2);
+
+    const descEdit = document.createElement("input");
+    descEdit.type = "text";
+    descEdit.maxLenght = "100";
+    descEdit.value = produto.descricao;
+    descEdit.classList.add("input-desc");
+    divForm2.appendChild(descEdit);
+
+    const divForm3 = document.createElement("div");
+    divForm3.classList.add("form-price");
+    form.appendChild(divForm3);
+
+    const precoEdit = document.createElement("input");
+    precoEdit.type = "text";
+    precoEdit.maxLenght = "100";
+    precoEdit.value = produto.preco;
+    precoEdit.classList.add("input-price");
+    divForm3.appendChild(precoEdit);
+
+    const divForm4 = document.createElement("div");
+    divForm4.classList.add("form-cat");
+    form.appendChild(divForm4);
+
+    const especEdit = document.createElement("input");
+    especEdit.type = "text";
+    especEdit.maxLenght = "30";
+    if (produto.constructor.name === "Comestivel") {
+      especEdit.value = produto.sabor;
+    } else {
+      especEdit.value = produto.material;
+    }
+    especEdit.classList.add("input-cat");
+    divForm4.appendChild(especEdit);
+
+    const formBotoes = document.createElement("div");
+    formBotoes.classList.add("botoes");
+    form.appendChild(formBotoes);
+
+    const confirmaBotao = document.createElement("button");
+    confirmaBotao.classList.add("btn");
+    formBotoes.appendChild(confirmaBotao);
+    confirmaBotao.addEventListener("click", (e) => {
+      e.preventDefault();
+      Estoque.editarProduto(
+        produto,
+        nomeEdit.value,
+        precoEdit.value,
+        descEdit.value,
+        especEdit.value
+      );
+      produto.updateMessage();
+      Catalogo.imprimirCatalogo();
+    });
+
+    const imgConfirma = document.createElement("img");
+    imgConfirma.src = "./assets/confirme.png";
+    confirmaBotao.appendChild(imgConfirma);
+
+    const cancelaBotao = document.createElement("button");
+    cancelaBotao.classList.add("btn");
+    formBotoes.appendChild(cancelaBotao);
+
+    const imgCancela = document.createElement("img");
+    imgCancela.src = "./assets/cancelar.png";
+    cancelaBotao.appendChild(imgCancela);
+    cancelaBotao.addEventListener("click", () => {
+      Catalogo.imprimirCatalogo();
+    });
   }
   static imprimirCatalogo() {
     const inventario = new Estoque();
@@ -160,7 +262,6 @@ class Catalogo {
       liCard.appendChild(divCategoria);
 
       const atributoProduto = document.createElement("span");
-      console.log(p);
       if (p.constructor.name === "Comestivel") {
         atributoProduto.innerText = Catalogo.formatarInput(p.sabor);
       } else {
@@ -175,9 +276,10 @@ class Catalogo {
 
       const botaoExcluir = document.createElement("button");
       botaoExcluir.classList.add("btn");
-      botaoExcluir.addEventListener("click", () =>
-        Estoque.deletarProduto(p.id)
-      );
+      botaoExcluir.addEventListener("click", () => {
+        Estoque.deletarProduto(p.id);
+        Catalogo.imprimirCatalogo();
+      });
       divBotoes.appendChild(botaoExcluir);
 
       const imgExcluir = document.createElement("img");
@@ -186,7 +288,9 @@ class Catalogo {
 
       const botaoEditar = document.createElement("button");
       botaoEditar.classList.add("btn");
-      botaoEditar.addEventListener("click", () => Estoque.editarProduto(p));
+      botaoEditar.addEventListener("click", () => {
+        Catalogo.transformaCard(p);
+      });
       divBotoes.appendChild(botaoEditar);
 
       const imgEditar = document.createElement("img");
@@ -198,17 +302,14 @@ class Catalogo {
 class Estoque {
   static #produtos = [];
   constructor() {}
-  static init() {
-    this.btnCadastro = document.querySelector("form");
-    this.btnCadastro.addEventListener("submit", Estoque.cadastrarProduto);
-  }
-  static cadastrarProduto(evento) {
-    evento.preventDefault();
-    const tipo = document.getElementById("opcoes").value;
+  static cadastrarProduto(e) {
+    e.preventDefault();
+
     const nome = document.querySelector("#input-name").value;
     const desc = document.querySelector("#input-desc").value;
     const preco = Number(document.querySelector("#input-price").value);
     const idProduto = Estoque.produtos.length;
+    const tipo = document.getElementById("opcoes").value;
     if (tipo === "comestivel") {
       const sabor = document.getElementById("atributoEspecifico").value;
       const item = new Comestivel(nome, desc, preco, idProduto, sabor);
@@ -219,7 +320,6 @@ class Estoque {
       Estoque.#produtos.push(item);
     }
     //Estoque.#produtos.push(item);
-    Catalogo.imprimirCatalogo();
   }
   static get produtos() {
     return this.#produtos;
@@ -227,104 +327,27 @@ class Estoque {
   static deletarProduto(id) {
     //console.log(id);
     this.#produtos = Estoque.produtos.filter((produto) => produto.id != id);
-    Catalogo.imprimirCatalogo();
   }
-  static editarProduto(produto) {
-    const card = document.getElementById(`produto_ ${produto.id}`);
-    card.innerHTML = "";
-    card.classList.remove("card-grid");
-
-    const form = document.createElement("form");
-    form.classList.add("form-card");
-    card.appendChild(form);
-
-    const divForm1 = document.createElement("div");
-    divForm1.classList.add("form-name");
-    form.appendChild(divForm1);
-
-    const primeiroInput = document.createElement("input");
-    primeiroInput.type = "text";
-    primeiroInput.maxLenght = "40";
-    primeiroInput.value = produto.nome;
-    primeiroInput.classList.add("input-name");
-    divForm1.appendChild(primeiroInput);
-
-    const divForm2 = document.createElement("div");
-    divForm2.classList.add("form-desc");
-    form.appendChild(divForm2);
-
-    const segundoInput = document.createElement("input");
-    segundoInput.type = "text";
-    segundoInput.maxLenght = "100";
-    segundoInput.value = produto.descricao;
-    segundoInput.classList.add("input-desc");
-    divForm2.appendChild(segundoInput);
-
-    const divForm3 = document.createElement("div");
-    divForm3.classList.add("form-price");
-    form.appendChild(divForm3);
-
-    const terceiroInput = document.createElement("input");
-    terceiroInput.type = "text";
-    terceiroInput.maxLenght = "100";
-    terceiroInput.value = produto.preco;
-    terceiroInput.classList.add("input-price");
-    divForm3.appendChild(terceiroInput);
-
-    const divForm4 = document.createElement("div");
-    divForm4.classList.add("form-cat");
-    form.appendChild(divForm4);
-
-    const quartoInput = document.createElement("input");
-    quartoInput.type = "text";
-    quartoInput.maxLenght = "30";
+  static editarProduto(
+    produto,
+    novoNome,
+    novoPreco,
+    novaDescricao,
+    novoAtributoEspecifico
+  ) {
+    produto.nome = novoNome;
+    produto.preco = novoPreco;
+    produto.descricao = novaDescricao;
     if (produto.constructor.name === "Comestivel") {
-      quartoInput.value = produto.sabor;
+      produto.sabor = novoAtributoEspecifico;
     } else {
-      quartoInput.value = produto.material;
+      produto.material = novoAtributoEspecifico;
     }
-    quartoInput.classList.add("input-cat");
-    divForm4.appendChild(quartoInput);
-
-    const formBotoes = document.createElement("div");
-    formBotoes.classList.add("botoes");
-    form.appendChild(formBotoes);
-
-    const confirmaBotao = document.createElement("button");
-    confirmaBotao.classList.add("btn");
-    formBotoes.appendChild(confirmaBotao);
-    confirmaBotao.addEventListener("click", () => {
-      produto.nome = primeiroInput.value;
-      produto.descricao = segundoInput.value;
-      produto.preco = terceiroInput.value;
-      if (produto.constructor.name === "Comestivel") {
-        produto.sabor = quartoInput.value;
-      } else {
-        produto.material = quartoInput.value;
-      }
-      produto.updateMessage();
-      Catalogo.imprimirCatalogo();
-    });
-
-    const imgConfirma = document.createElement("img");
-    imgConfirma.src = "./assets/confirme.png";
-    confirmaBotao.appendChild(imgConfirma);
-
-    const cancelaBotao = document.createElement("button");
-    cancelaBotao.classList.add("btn");
-    formBotoes.appendChild(cancelaBotao);
-
-    const imgCancela = document.createElement("img");
-    imgCancela.src = "./assets/cancelar.png";
-    cancelaBotao.appendChild(imgCancela);
-    cancelaBotao.addEventListener("click", () => {
-      Catalogo.imprimirCatalogo();
-    });
   }
 }
-Catalogo.init();
-Estoque.init();
 
 Estoque.prototype.verificarEstoque = function () {
   return `Há ${Estoque.produtos.length} em estoque`;
 };
+
+Catalogo.init();
