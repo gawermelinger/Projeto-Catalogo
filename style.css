@@ -124,7 +124,7 @@ input {
   margin: 0.5rem;
   border-radius: 0.8rem;
 }
-.display {
+.display-hidden {
   display: none;
 }
 .div-btn {
