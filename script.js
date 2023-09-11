@@ -96,6 +96,7 @@ class Catalogo {
     this.btnCadastro.addEventListener("submit", (e) => {
       Estoque.cadastrarProduto(e);
       Catalogo.imprimirCatalogo();
+      this.limparFormulario();
     });
   }
 
@@ -126,6 +127,21 @@ class Catalogo {
     let maiuscula = input[0].toUpperCase();
     let minuscula = input.slice(1).toLowerCase();
     return maiuscula + minuscula;
+  }
+  static limparFormulario() {
+    let nome = document.querySelector("#input-name");
+    let desc = document.querySelector("#input-desc");
+    let preco = document.querySelector("#input-price");
+    let tipo = document.getElementById("opcoes");
+    if (tipo === "comestivel") {
+      let sabor = document.getElementById("atributoEspecifico");
+    } else {
+      let material = document.getElementById("atributoEspecifico");
+    }
+    nome.value = "";
+    desc.value = "";
+    preco.value = "";
+    tipo.value = "";
   }
   static transformaCard(produto) {
     const card = document.getElementById(`produto_ ${produto.id}`);
