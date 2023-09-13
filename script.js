@@ -149,8 +149,8 @@ class Catalogo {
     const botoaoAdicionar = document.getElementById("btn-add");
     botoaoAdicionar.addEventListener("click", () => {
       const sectionAdicionar = document.getElementById("form-section");
-      sectionAdicionar.classList.remove("display-hidden");
-      botoaoAdicionar.classList.add("display-hidden");
+      sectionAdicionar.classList.toggle("display-hidden");
+      botoaoAdicionar.classList.toggle("display-hidden");
     });
     //btão de escolha
     const escolha = document.getElementById("opcoes"); //select estático
